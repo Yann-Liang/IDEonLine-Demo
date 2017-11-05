@@ -1,10 +1,11 @@
 <template>
     <div class="">
         <section>
-            <input type="file" id="uploadFile" @onchange="readLocalFile($event)"/>
-            <div><img src="" id="img"/></div>
-
-            <div><textarea id="fileContent" rows="30" cols="60"></textarea></div>
+            <input type="file" accept="application/json" @change="readLocalFile1($event)" value="读取钱包文件"/>
+            <el-button type="primary" @click="saveStorage">保存到storage</el-button>
+            <el-button type="primary" @click="save">备份到本地</el-button>
+            <pre>{{json}}</pre>
+            <a :href="href" download="json" id="a">链接</a>
         </section>
     </div>
 </template>
@@ -18,7 +19,9 @@
         //实例的数据对象
         data() {
             return {
-
+                textarea:"",
+                json:'',
+                href:''
             }
         },
         //数组或对象，用于接收来自父组件的数据
@@ -31,27 +34,44 @@
         },
         //方法
         methods: {
-            readLocalFile(e){
-                console.log(e);
-                var localFile = document.getElementById("uploadFile").files[0];
-
-                var reader = new FileReader();
-                //Uncaught SyntaxError:Unexpected identifier
-                var content;
-                reader.onload = function(event) {
+            readLocalFile1(e){
+                console.log("e",e);
+                var localFile = e.target.files[0];
+                console.log(localFile);
+                var content,
+                    reader = new FileReader();;
+                reader.onload = (event)=> {
                     content = event.target.result;
-                    //alert(content);
-
-                    document.getElementById("img").src = content;
-                    document.getElementById("fileContent").value = content;
+                    console.log(content)
+                    this.json=content;
                 }
                 reader.onerror = function(event) {
                 alert('error')
-                    //alert("File could not be read! Code " + event.target.error.code);
-                }
-                //reader.readAsText(localFile,"UTF-8");
 
-        content = reader.readAsDataURL(localFile,"UTF-8");
+                }
+
+                content = reader.readAsText(localFile,"UTF-8");
+                console.log('read',content)
+            },
+            saveStorage(){
+                console.log(this.json)
+                localStorage.json=this.json;
+                console.log("storage",localStorage.json)
+            },
+            save(){
+                this.href=localStorage.json;
+                console.log("href",this.href);
+
+                var bb = new Blob([this.href],{type : 'application/json'});
+                console.log('bb',bb);
+                var jsonURL=window.URL.createObjectURL(bb);
+                console.log(jsonURL)
+                this.href=jsonURL;
+                let a=document.getElementById('a');
+                console.log(a)
+                setTimeout(function() {
+                    a.click()
+                }, 50);
             }
         },
         //生命周期函数
