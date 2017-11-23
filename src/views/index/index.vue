@@ -5,7 +5,7 @@
             <el-button type="primary" @click="saveStorage">保存到storage</el-button>
             <el-button type="primary" @click="save">备份到本地</el-button>
             <pre>{{json}}</pre>
-            <a :href="href" download="json" id="a">链接</a>
+            <a class="a" :href="href" download="json" id="a">链接</a>
         </section>
     </div>
 </template>
@@ -59,14 +59,15 @@
                 console.log("storage",localStorage.json)
             },
             save(){
-                this.href=localStorage.json;
+                this.href=localStorage.json;//获取需要下载的内容
                 console.log("href",this.href);
 
-                var bb = new Blob([this.href],{type : 'application/json'});
+                var bb = new Blob([this.href],{type : 'application/json'});//
                 console.log('bb',bb);
-                var jsonURL=window.URL.createObjectURL(bb);
+                var jsonURL=window.URL.createObjectURL(bb);//转成地址
                 console.log(jsonURL)
-                this.href=jsonURL;
+                this.href=jsonURL;//变成地址
+
                 let a=document.getElementById('a');
                 console.log(a)
                 setTimeout(function() {
@@ -109,5 +110,7 @@
 	描述：统一使用less,局部样式
 -->
 <style lang="less" scoped>
-
+    .a{
+        display: none;
+    }
 </style>
